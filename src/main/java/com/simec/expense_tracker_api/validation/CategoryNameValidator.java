@@ -1,0 +1,24 @@
+package com.simec.expense_tracker_api.validation;
+
+import com.simec.expense_tracker_api.dao.CategoryDao;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CategoryNameValidator implements ConstraintValidator<CategoryExists, String> {
+
+    private final CategoryDao categoryDao;
+
+    @Autowired
+    public CategoryNameValidator(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
+    }
+
+    @Override
+    public boolean isValid(String categoryName, ConstraintValidatorContext context) {
+        return categoryDao.findAll().stream()
+                .anyMatch(c -> c.name().equals(categoryName));
+    }
+}

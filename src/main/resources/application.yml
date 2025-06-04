@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: expense-tracker-api
+    timezone:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password:
+  sql:
+    init:
+      mode: always
