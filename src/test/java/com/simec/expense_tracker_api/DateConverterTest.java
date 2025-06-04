@@ -1,13 +1,11 @@
 package com.simec.expense_tracker_api;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DateConverterTest {
     private final DateConverter dateConverter = new DateConverter("Europe/Paris");
@@ -25,5 +23,4 @@ class DateConverterTest {
         LocalDate localDate = dateConverter.toLocalDate(instant);
         assertEquals(LocalDate.of(2023, 2, 1), localDate);
     }
-
 }

@@ -9,4 +9,4 @@ INSERT INTO category (id, name) VALUES (7, 'Others') ON CONFLICT DO NOTHING;
 CREATE INDEX IF NOT EXISTS index_category_id ON category(id);
 
 INSERT INTO person (id, username, email, password)
-VALUES (1, 'Tester', 'test@test.com', 'asdfadadfsadfdsf') ON CONFLICT DO NOTHING;
+VALUES (1, 'Tester', 'test@test.com', 'test') ON CONFLICT DO NOTHING;
