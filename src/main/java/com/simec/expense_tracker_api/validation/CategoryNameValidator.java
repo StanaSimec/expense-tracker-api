@@ -18,7 +18,9 @@ public class CategoryNameValidator implements ConstraintValidator<CategoryExists
 
     @Override
     public boolean isValid(String categoryName, ConstraintValidatorContext context) {
-        return categoryDao.findAll().stream()
-                .anyMatch(c -> c.name().equals(categoryName));
+        if (categoryName == null) {
+            return false;
+        }
+        return categoryDao.findByName(categoryName).isPresent();
     }
 }
