@@ -13,9 +13,7 @@ CREATE TABLE IF NOT EXISTS category (
 CREATE TABLE IF NOT EXISTS expense (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
-    applied_at TIMESTAMP NOT NULL,
+    applied_at DATE NOT NULL,
     person_id SERIAL REFERENCES person (id) ON DELETE CASCADE,
     category_id SERIAL REFERENCES category (id) ON DELETE CASCADE
 );

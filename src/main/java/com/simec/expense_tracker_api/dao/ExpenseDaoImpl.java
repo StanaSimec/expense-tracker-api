@@ -11,10 +11,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,8 +26,6 @@ public class ExpenseDaoImpl implements ExpenseDao {
             "SELECT " +
                     "expense.id as expenseId, " +
                     "expense.name as expenseName, " +
-                    "expense.created_at, " +
-                    "expense.updated_at, " +
                     "expense.applied_at, " +
                     "category.id as categoryId, " +
                     "category.name as categoryName " +
@@ -59,33 +57,28 @@ public class ExpenseDaoImpl implements ExpenseDao {
 
     @Override
     public void update(Expense expense, long personId) {
-        String sql = "UPDATE expense SET name = ?, updated_at = ?, applied_at = ?, category_id = ? " +
-                "WHERE id = ? AND person_id = ?";
+        String sql = "UPDATE expense SET name = ?, applied_at = ?, category_id = ? WHERE id = ? AND person_id = ?";
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql, PreparedStatement.NO_GENERATED_KEYS);
             statement.setString(1, expense.name());
-            statement.setTimestamp(2, new Timestamp(expense.updatedAt().toEpochMilli()));
-            statement.setTimestamp(3, new Timestamp(expense.appliedAt().toEpochMilli()));
-            statement.setLong(4, expense.category().id());
-            statement.setLong(5, expense.id());
-            statement.setLong(6, personId);
+            statement.setDate(2, Date.valueOf(expense.appliedAt()));
+            statement.setLong(3, expense.category().id());
+            statement.setLong(4, expense.id());
+            statement.setLong(5, personId);
             return statement;
         });
     }
 
     @Override
     public long create(Expense expense, long personId) {
-        String sql = "INSERT INTO expense (name, created_at, updated_at, applied_at, person_id, category_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO expense (name, applied_at, person_id, category_id) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, expense.name());
-            statement.setTimestamp(2, new Timestamp(expense.createdAt().toEpochMilli()));
-            statement.setTimestamp(3, new Timestamp(expense.updatedAt().toEpochMilli()));
-            statement.setTimestamp(4, new Timestamp(expense.appliedAt().toEpochMilli()));
-            statement.setLong(5, personId);
-            statement.setLong(6, expense.category().id());
+            statement.setDate(2, Date.valueOf(expense.appliedAt()));
+            statement.setLong(3, personId);
+            statement.setLong(4, expense.category().id());
             return statement;
         }, keyHolder);
         return ((Number) Objects.requireNonNull(keyHolder.getKeys()).get("id")).longValue();
@@ -118,9 +111,7 @@ public class ExpenseDaoImpl implements ExpenseDao {
             return new Expense(
                     rs.getLong("expenseId"),
                     rs.getString("expenseName"),
-                    rs.getTimestamp("created_at").toInstant(),
-                    rs.getTimestamp("updated_at").toInstant(),
-                    rs.getTimestamp("applied_at").toInstant(),
+                    rs.getDate("applied_at").toLocalDate(),
                     new Category(
                             rs.getLong("categoryId"),
                             rs.getString("categoryName")

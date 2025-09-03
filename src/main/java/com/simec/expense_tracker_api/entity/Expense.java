@@ -1,13 +1,11 @@
 package com.simec.expense_tracker_api.entity;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 public record Expense(
         long id,
         String name,
-        Instant createdAt,
-        Instant updatedAt,
-        Instant appliedAt,
+        LocalDate appliedAt,
         Category category
 ) {
 }
