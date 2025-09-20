@@ -114,6 +114,8 @@ class ExpenseControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/" + EXPENSE.id()).with(csrf()))
                 .andExpect(status().isNoContent());
+
+        Mockito.verify(expenseService, Mockito.times(1)).delete(EXPENSE.id());
     }
 
     private void assertResponseBody(ResultActions resultActions) throws Exception {
