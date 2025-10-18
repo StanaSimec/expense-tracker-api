@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/expenses")
+@RequestMapping("/api/v1/expenses")
 public class ExpenseController {
     private final ExpenseService expenseService;
     private final ExpenseResponseDtoMapper mapper;

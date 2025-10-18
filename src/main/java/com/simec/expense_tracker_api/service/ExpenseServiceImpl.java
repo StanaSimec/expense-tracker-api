@@ -3,6 +3,7 @@ package com.simec.expense_tracker_api.service;
 import com.simec.expense_tracker_api.Authentication;
 import com.simec.expense_tracker_api.dao.CategoryDao;
 import com.simec.expense_tracker_api.dao.ExpenseDao;
+import com.simec.expense_tracker_api.dao.UserDao;
 import com.simec.expense_tracker_api.dto.ExpenseRequestDto;
 import com.simec.expense_tracker_api.entity.Category;
 import com.simec.expense_tracker_api.entity.Expense;
@@ -21,7 +22,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final Authentication authentication;
 
     @Autowired
-    public ExpenseServiceImpl(ExpenseDao expenseDao, CategoryDao categoryDao, Authentication authentication) {
+    public ExpenseServiceImpl(ExpenseDao expenseDao, CategoryDao categoryDao, Authentication authentication,
+                              UserDao userDao) {
         this.expenseDao = expenseDao;
         this.categoryDao = categoryDao;
         this.authentication = authentication;
@@ -31,7 +33,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public Expense create(ExpenseRequestDto dto) {
         Category category = findCategory(dto.category());
         Expense expense = new Expense(
-                0L,
+                authentication.getPrincipalId(),
                 dto.name(),
                 dto.appliedAt(),
                 category
