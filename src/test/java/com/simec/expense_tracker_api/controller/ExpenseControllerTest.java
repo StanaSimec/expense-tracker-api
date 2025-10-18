@@ -1,10 +1,12 @@
 package com.simec.expense_tracker_api.controller;
 
 import com.simec.expense_tracker_api.dao.CategoryDao;
+import com.simec.expense_tracker_api.date.DateWrapper;
 import com.simec.expense_tracker_api.dto.ExpenseRequestDto;
 import com.simec.expense_tracker_api.dto.ExpenseResponseDto;
 import com.simec.expense_tracker_api.entity.Category;
 import com.simec.expense_tracker_api.entity.Expense;
+import com.simec.expense_tracker_api.filtering.Filter;
 import com.simec.expense_tracker_api.filtering.FilterService;
 import com.simec.expense_tracker_api.mapper.ExpenseResponseDtoMapper;
 import com.simec.expense_tracker_api.service.ExpenseService;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -53,6 +56,8 @@ class ExpenseControllerTest {
     private FilterService filterService;
     @MockitoBean
     private CategoryDao categoryDao;
+    @MockitoBean
+    private DateWrapper dateWrapper;
 
     @WithMockUser
     @Test
@@ -116,6 +121,24 @@ class ExpenseControllerTest {
                 .andExpect(status().isNoContent());
 
         Mockito.verify(expenseService, Mockito.times(1)).delete(EXPENSE.id());
+    }
+
+    @WithMockUser
+    @Test
+    void whenFilterIsRequestedWithTagThenFilterByTagIsUsed() throws Exception {
+        LocalDate now = LocalDate.of(2023, 4, 12);
+        Filter filter = new Filter(now, now.minusMonths(1));
+        Mockito.when(dateWrapper.now()).thenReturn(now);
+        Mockito.when(filterService.getForTag("month", now)).thenReturn(filter);
+
+        Mockito.when(expenseService.findByFilter(filter)).thenReturn(List.of(EXPENSE));
+        Mockito.when(mapper.toDto(EXPENSE)).thenReturn(
+                new ExpenseResponseDto(EXPENSE.id(), EXPENSE.name(), EXPENSE.appliedAt(), EXPENSE.category().name()));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/?tag=month").with(csrf()))
+                .andExpect(status().isOk());
+
+        Mockito.verify(expenseService, Mockito.times(1)).findByFilter(filter);
     }
 
     private void assertResponseBody(ResultActions resultActions) throws Exception {

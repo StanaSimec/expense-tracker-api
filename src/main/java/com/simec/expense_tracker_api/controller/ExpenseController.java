@@ -1,5 +1,6 @@
 package com.simec.expense_tracker_api.controller;
 
+import com.simec.expense_tracker_api.date.DateWrapper;
 import com.simec.expense_tracker_api.dto.ExpenseRequestDto;
 import com.simec.expense_tracker_api.dto.ExpenseResponseDto;
 import com.simec.expense_tracker_api.entity.Expense;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,13 +21,16 @@ import java.util.List;
 public class ExpenseController {
     private final ExpenseService expenseService;
     private final ExpenseResponseDtoMapper mapper;
-    private final FilterService filterFactory;
+    private final FilterService filterService;
+    private final DateWrapper dateWrapper;
 
     @Autowired
-    public ExpenseController(ExpenseService expenseService, ExpenseResponseDtoMapper mapper, FilterService filterFactory) {
+    public ExpenseController(ExpenseService expenseService, ExpenseResponseDtoMapper mapper, FilterService filterFactory,
+                             DateWrapper dateProvider) {
         this.expenseService = expenseService;
         this.mapper = mapper;
-        this.filterFactory = filterFactory;
+        this.filterService = filterFactory;
+        this.dateWrapper = dateProvider;
     }
 
     @PostMapping
@@ -59,13 +62,13 @@ public class ExpenseController {
                                                            @RequestParam(required = false) String start,
                                                            @RequestParam(required = false) String end) {
         if (tag != null) {
-            Filter filter = filterFactory.getForTag(tag, LocalDate.now());
+            Filter filter = filterService.getForTag(tag, dateWrapper.now());
             List<Expense> expenses = expenseService.findByFilter(filter);
             return ResponseEntity.status(HttpStatus.OK).body(mapper.toDtoList(expenses));
         }
 
         if (start != null && end != null) {
-            Filter filter = new Filter(LocalDate.parse(start), LocalDate.parse(end));
+            Filter filter = new Filter(dateWrapper.parse(start), dateWrapper.parse(end));
             List<Expense> expenses = expenseService.findByFilter(filter);
             return ResponseEntity.status(HttpStatus.OK).body(mapper.toDtoList(expenses));
         }
