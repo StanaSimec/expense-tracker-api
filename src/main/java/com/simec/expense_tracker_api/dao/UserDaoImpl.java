@@ -40,19 +40,19 @@ public class UserDaoImpl implements UserDao {
         String sql = "INSERT INTO person (username, email, password) VALUES (?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
-                PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, user.getUsername());
-                ps.setString(2, user.getEmail());
-                ps.setString(3, user.getPassword());
-                return ps;
-                }, keyHolder);
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            return ps;
+        }, keyHolder);
         Objects.requireNonNull(keyHolder.getKeys());
         return new User.Builder()
-                    .withId(((Integer) keyHolder.getKeys().get("id")))
-                    .withUsername((String) keyHolder.getKeys().get("username"))
-                    .withEmail((String) keyHolder.getKeys().get("email"))
-                    .withPassword((String) keyHolder.getKeys().get("password"))
-                    .build();
+                .withId(((Integer) keyHolder.getKeys().get("id")))
+                .withUsername((String) keyHolder.getKeys().get("username"))
+                .withEmail((String) keyHolder.getKeys().get("email"))
+                .withPassword((String) keyHolder.getKeys().get("password"))
+                .build();
     }
 
     @Override

@@ -143,7 +143,7 @@ class ExpenseServiceTest {
         Mockito.when(expenseDao.find(EXPENSE.id(), PRINCIPAL_ID)).thenReturn(Optional.of(EXPENSE));
         Mockito.when(categoryDao.findByName(CATEGORY.name())).thenReturn(Optional.of(CATEGORY));
 
-        expenseService.update(new ExpenseRequestDto(expense.name(), DATE_NOW, CATEGORY.name()),expense.id());
+        expenseService.update(new ExpenseRequestDto(expense.name(), DATE_NOW, CATEGORY.name()), expense.id());
 
         Mockito.verify(expenseDao, Mockito.times(1)).update(Mockito.eq(expense),
                 Mockito.eq(PRINCIPAL_ID));
