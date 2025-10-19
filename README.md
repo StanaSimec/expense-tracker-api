@@ -101,6 +101,18 @@ GET api/v1/expenses/1
 GET api/v1/expenses?tag=week
 ```
 
+## Filter expenses by date
+
+```
+GET api/v1/expenses?start=2025-06-04&end=2025-06-04
+```
+
+## Get expenses for current user
+
+```
+GET api/v1/expenses
+```
+
 ## Tech Stack
 - Java
 - Gradle
