@@ -1,6 +1,5 @@
 package com.simec.expense_tracker_api.service;
 
-import com.simec.expense_tracker_api.Authentication;
 import com.simec.expense_tracker_api.dao.CategoryDao;
 import com.simec.expense_tracker_api.dao.ExpenseDao;
 import com.simec.expense_tracker_api.dao.UserDao;
@@ -19,39 +18,39 @@ import java.util.List;
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseDao expenseDao;
     private final CategoryDao categoryDao;
-    private final Authentication authentication;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public ExpenseServiceImpl(ExpenseDao expenseDao, CategoryDao categoryDao, Authentication authentication,
+    public ExpenseServiceImpl(ExpenseDao expenseDao, CategoryDao categoryDao, AuthenticationService authenticationService,
                               UserDao userDao) {
         this.expenseDao = expenseDao;
         this.categoryDao = categoryDao;
-        this.authentication = authentication;
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public Expense create(ExpenseRequestDto dto) {
         Category category = findCategory(dto.category());
         Expense expense = new Expense(
-                authentication.getPrincipalId(),
+                authenticationService.getPrincipalId(),
                 dto.name(),
                 dto.appliedAt(),
                 category
         );
-        long createdId = expenseDao.create(expense, authentication.getPrincipalId());
+        long createdId = expenseDao.create(expense, authenticationService.getPrincipalId());
         return find(createdId);
     }
 
     @Override
     public Expense find(long id) {
-        return expenseDao.find(id, authentication.getPrincipalId())
+        return expenseDao.find(id, authenticationService.getPrincipalId())
                 .orElseThrow(() -> new ExpenseNotFoundException("Expense not found"));
     }
 
     @Override
     public void delete(long id) {
         Expense expense = find(id);
-        expenseDao.delete(expense.id(), authentication.getPrincipalId());
+        expenseDao.delete(expense.id(), authenticationService.getPrincipalId());
     }
 
     @Override
@@ -64,18 +63,18 @@ public class ExpenseServiceImpl implements ExpenseService {
                 requestDto.appliedAt(),
                 category
         );
-        expenseDao.update(updatedExpense, authentication.getPrincipalId());
+        expenseDao.update(updatedExpense, authenticationService.getPrincipalId());
         return find(savedExpense.id());
     }
 
     @Override
     public List<Expense> findByFilter(Filter filter) {
-        return expenseDao.findByFilter(filter, authentication.getPrincipalId());
+        return expenseDao.findByFilter(filter, authenticationService.getPrincipalId());
     }
 
     @Override
     public List<Expense> findAll() {
-        return expenseDao.findAll(authentication.getPrincipalId());
+        return expenseDao.findAll(authenticationService.getPrincipalId());
     }
 
     private Category findCategory(String name) {

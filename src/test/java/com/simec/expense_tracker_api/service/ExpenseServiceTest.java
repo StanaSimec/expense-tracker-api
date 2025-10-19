@@ -1,6 +1,5 @@
 package com.simec.expense_tracker_api.service;
 
-import com.simec.expense_tracker_api.Authentication;
 import com.simec.expense_tracker_api.dao.CategoryDao;
 import com.simec.expense_tracker_api.dao.ExpenseDao;
 import com.simec.expense_tracker_api.dto.ExpenseRequestDto;
@@ -44,11 +43,11 @@ class ExpenseServiceTest {
     private CategoryDao categoryDao;
 
     @Mock
-    private Authentication authentication;
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
-        Mockito.when(authentication.getPrincipalId()).thenReturn(PRINCIPAL_ID);
+        Mockito.when(authenticationService.getPrincipalId()).thenReturn(PRINCIPAL_ID);
     }
 
     @Test

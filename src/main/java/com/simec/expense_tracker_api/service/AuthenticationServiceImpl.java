@@ -1,4 +1,4 @@
-package com.simec.expense_tracker_api;
+package com.simec.expense_tracker_api.service;
 
 import com.simec.expense_tracker_api.dao.UserDao;
 import com.simec.expense_tracker_api.exception.UserNotFoundException;
@@ -8,15 +8,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Authentication {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserDao userDao;
 
     @Autowired
-    public Authentication(UserDao userDao) {
+    public AuthenticationServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
+    @Override
     public long getPrincipalId() {
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal()).getUsername();
