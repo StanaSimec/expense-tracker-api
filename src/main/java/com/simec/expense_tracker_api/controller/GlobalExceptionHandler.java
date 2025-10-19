@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.simec.expense_tracker_api.dto.ErrorListResponseDto;
 import com.simec.expense_tracker_api.dto.ErrorResponseDto;
 import com.simec.expense_tracker_api.exception.ExpenseNotFoundException;
+import com.simec.expense_tracker_api.exception.FilterNotFoundException;
 import com.simec.expense_tracker_api.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,12 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExpenseNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleNotFound(Exception e) {
+    public ResponseEntity<ErrorResponseDto> handleExpenseNotFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDto(e.getMessage()));
+    }
+
+    @ExceptionHandler(FilterNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleFilterNotFound(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDto(e.getMessage()));
     }
 
